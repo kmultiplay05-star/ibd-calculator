@@ -1,0 +1,86 @@
+{
+    "name": "IBD薬価計算アプリ",
+    "short_name": "IBD薬価計算",
+    "description": "炎症性腸疾患（IBD）治療薬の薬価計算・費用シミュレーター。体重に応じた投与量計算、自己負担額の算出が可能です。",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#0f172a",
+    "theme_color": "#3b82f6",
+    "lang": "ja",
+    "icons": [
+        {
+            "src": "icons/icon-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-128x128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-152x152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["medical", "health", "utilities"],
+    "screenshots": [
+        {
+            "src": "screenshots/screenshot1.png",
+            "sizes": "1080x1920",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "IBD薬価計算アプリのメイン画面"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "潰瘍性大腸炎",
+            "short_name": "UC",
+            "description": "潰瘍性大腸炎の薬剤を計算",
+            "url": "./index.html?disease=UC"
+        },
+        {
+            "name": "クローン病",
+            "short_name": "CD",
+            "description": "クローン病の薬剤を計算",
+            "url": "./index.html?disease=CD"
+        }
+    ]
+}

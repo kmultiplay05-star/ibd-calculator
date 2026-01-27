@@ -1,0 +1,1165 @@
+/* ================================
+   CSS Variables & Design Tokens
+   ================================ */
+:root {
+    /* Primary Colors - Medical Blue Theme */
+    --primary-50: #eff6ff;
+    --primary-100: #dbeafe;
+    --primary-200: #bfdbfe;
+    --primary-300: #93c5fd;
+    --primary-400: #60a5fa;
+    --primary-500: #3b82f6;
+    --primary-600: #2563eb;
+    --primary-700: #1d4ed8;
+    --primary-800: #1e40af;
+    --primary-900: #1e3a8a;
+
+    /* Accent Colors - Teal */
+    --accent-400: #2dd4bf;
+    --accent-500: #14b8a6;
+    --accent-600: #0d9488;
+
+    /* Semantic Colors */
+    --success-500: #22c55e;
+    --warning-500: #f59e0b;
+    --error-500: #ef4444;
+
+    /* Neutral Colors */
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --gray-950: #030712;
+
+    /* Background Gradient */
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+    /* Typography */
+    --font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+
+    /* Border Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-full: 9999px;
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 300ms ease;
+    --transition-slow: 500ms ease;
+}
+
+/* ================================
+   Reset & Base Styles
+   ================================ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--gray-100);
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ================================
+   App Container
+   ================================ */
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-4);
+}
+
+/* ================================
+   Header
+   ================================ */
+.header {
+    text-align: center;
+    padding: var(--space-8) var(--space-4);
+    margin-bottom: var(--space-8);
+}
+
+.header-content {
+    animation: fadeInDown 0.6s ease;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
+.logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+    animation: pulse 2s infinite;
+}
+
+.logo-icon svg {
+    width: 28px;
+    height: 28px;
+    color: white;
+}
+
+.logo h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff, var(--primary-200));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tagline {
+    font-size: var(--font-size-lg);
+    color: var(--gray-400);
+    font-weight: 300;
+}
+
+/* ================================
+   Glass Card
+   ================================ */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    box-shadow: var(--card-shadow);
+    margin-bottom: var(--space-6);
+    animation: fadeInUp 0.5s ease;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--gray-100);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--card-border);
+}
+
+.title-icon {
+    font-size: var(--font-size-2xl);
+}
+
+/* ================================
+   Input Section
+   ================================ */
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.input-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--gray-300);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+input[type="number"],
+select {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-lg);
+    color: var(--gray-100);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+input[type="number"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+input[type="number"] {
+    padding-right: 50px;
+}
+
+.input-unit {
+    position: absolute;
+    right: var(--space-4);
+    color: var(--gray-400);
+    font-size: var(--font-size-sm);
+    pointer-events: none;
+}
+
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--space-3) center;
+    background-size: 18px;
+    padding-right: 45px;
+}
+
+select option {
+    background: var(--gray-800);
+    color: var(--gray-100);
+}
+
+/* Radio Buttons */
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+    padding: var(--space-2) var(--space-4);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    border: 1px solid transparent;
+    transition: all var(--transition-fast);
+}
+
+.radio-label:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.radio-label input {
+    display: none;
+}
+
+.radio-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gray-500);
+    border-radius: var(--radius-full);
+    position: relative;
+    transition: all var(--transition-fast);
+}
+
+.radio-custom::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 10px;
+    height: 10px;
+    background: var(--primary-500);
+    border-radius: var(--radius-full);
+    transition: transform var(--transition-fast);
+}
+
+.radio-label input:checked+.radio-custom {
+    border-color: var(--primary-500);
+}
+
+.radio-label input:checked+.radio-custom::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.radio-label input:checked~.radio-text {
+    color: var(--primary-300);
+}
+
+.radio-text {
+    font-size: var(--font-size-sm);
+    color: var(--gray-300);
+    transition: color var(--transition-fast);
+}
+
+/* ================================
+   Drug Categories
+   ================================ */
+.drug-categories {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.drug-category {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: all var(--transition-normal);
+}
+
+.drug-category:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-5);
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.category-header:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.category-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.category-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+}
+
+.category-name {
+    font-weight: 600;
+    color: var(--gray-100);
+}
+
+.category-count {
+    font-size: var(--font-size-sm);
+    color: var(--gray-500);
+    background: rgba(255, 255, 255, 0.08);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+}
+
+.category-toggle {
+    width: 24px;
+    height: 24px;
+    color: var(--gray-400);
+    transition: transform var(--transition-normal);
+}
+
+.category-toggle.expanded {
+    transform: rotate(180deg);
+}
+
+.category-drugs {
+    display: none;
+    padding: var(--space-4) var(--space-5);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.category-drugs.show {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+.drug-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+}
+
+.drug-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.drug-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.drug-card.selected {
+    border-color: var(--primary-500);
+    background: rgba(59, 130, 246, 0.15);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.drug-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--space-2);
+}
+
+.drug-name {
+    font-weight: 600;
+    color: var(--gray-100);
+    font-size: var(--font-size-base);
+}
+
+.drug-generic {
+    font-size: var(--font-size-xs);
+    color: var(--gray-500);
+    margin-top: var(--space-1);
+}
+
+.drug-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gray-500);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.drug-card.selected .drug-checkbox {
+    background: var(--primary-500);
+    border-color: var(--primary-500);
+}
+
+.drug-checkbox svg {
+    width: 14px;
+    height: 14px;
+    color: white;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.drug-card.selected .drug-checkbox svg {
+    opacity: 1;
+}
+
+.drug-indication {
+    display: inline-flex;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+}
+
+.indication-badge {
+    font-size: var(--font-size-xs);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+}
+
+.indication-badge.uc {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--primary-300);
+}
+
+.indication-badge.cd {
+    background: rgba(45, 212, 191, 0.2);
+    color: var(--accent-400);
+}
+
+.drug-price-info {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: var(--font-size-sm);
+    color: var(--gray-400);
+}
+
+/* Category Colors */
+.category-5asa .category-icon {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+}
+
+.category-steroid .category-icon {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.category-immunomodulator .category-icon {
+    background: rgba(168, 85, 247, 0.2);
+    color: #a855f7;
+}
+
+.category-immunosuppressant .category-icon {
+    background: rgba(236, 72, 153, 0.2);
+    color: #ec4899;
+}
+
+.category-antitnf .category-icon {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+.category-antiil .category-icon {
+    background: rgba(45, 212, 191, 0.2);
+    color: #2dd4bf;
+}
+
+.category-antiintegrin .category-icon {
+    background: rgba(99, 102, 241, 0.2);
+    color: #6366f1;
+}
+
+.category-jak .category-icon {
+    background: rgba(244, 63, 94, 0.2);
+    color: #f43f5e;
+}
+
+.category-s1p .category-icon {
+    background: rgba(251, 146, 60, 0.2);
+    color: #fb923c;
+}
+
+/* ================================
+   Results Section
+   ================================ */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+}
+
+.result-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all var(--transition-fast);
+}
+
+.result-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+}
+
+.result-label {
+    font-size: var(--font-size-sm);
+    color: var(--gray-400);
+    margin-bottom: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.result-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff, var(--primary-200));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.result-value.highlight {
+    background: linear-gradient(135deg, var(--accent-400), var(--primary-400));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.result-unit {
+    font-size: var(--font-size-sm);
+    color: var(--gray-500);
+    margin-top: var(--space-1);
+}
+
+/* ================================
+   Timeline Section
+   ================================ */
+.timeline-controls {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+}
+
+.timeline-btn {
+    padding: var(--space-2) var(--space-5);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+    color: var(--gray-400);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.timeline-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--gray-200);
+}
+
+.timeline-btn.active {
+    background: var(--primary-600);
+    border-color: var(--primary-500);
+    color: white;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: var(--space-6);
+}
+
+.timeline-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-4);
+}
+
+.summary-item {
+    text-align: center;
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-lg);
+}
+
+.summary-label {
+    font-size: var(--font-size-xs);
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-1);
+}
+
+.summary-value {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--gray-100);
+}
+
+/* ================================
+   Comparison Section
+   ================================ */
+.comparison-chart-container {
+    height: 300px;
+    margin-bottom: var(--space-6);
+}
+
+.comparison-table-container {
+    overflow-x: auto;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.comparison-table th {
+    color: var(--gray-400);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: var(--font-size-xs);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.comparison-table tbody tr {
+    transition: background var(--transition-fast);
+}
+
+.comparison-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.comparison-table td {
+    color: var(--gray-200);
+}
+
+.comparison-table .drug-name-cell {
+    font-weight: 600;
+    color: var(--gray-100);
+}
+
+.comparison-table .price-cell {
+    font-weight: 600;
+    color: var(--primary-300);
+}
+
+/* ================================
+   Footer
+   ================================ */
+.footer {
+    padding: var(--space-8) var(--space-4);
+    text-align: center;
+}
+
+.disclaimer {
+    font-size: var(--font-size-sm);
+    color: var(--gray-500);
+    margin-bottom: var(--space-2);
+}
+
+.copyright {
+    font-size: var(--font-size-xs);
+    color: var(--gray-600);
+}
+
+/* ================================
+   Empty State
+   ================================ */
+.empty-state {
+    text-align: center;
+    padding: var(--space-12);
+    color: var(--gray-500);
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: var(--space-4);
+    opacity: 0.5;
+}
+
+.empty-state-text {
+    font-size: var(--font-size-lg);
+}
+
+/* ================================
+   Animations
+   ================================ */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+
+    to {
+        opacity: 1;
+        max-height: 1000px;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 4px 30px rgba(59, 130, 246, 0.6);
+    }
+}
+
+/* ================================
+   Responsive Design
+   ================================ */
+@media (max-width: 768px) {
+    .app-container {
+        padding: var(--space-3);
+    }
+
+    .glass-card {
+        padding: var(--space-5);
+        border-radius: var(--radius-xl);
+    }
+
+    .logo h1 {
+        font-size: var(--font-size-2xl);
+    }
+
+    .tagline {
+        font-size: var(--font-size-base);
+    }
+
+    .input-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .drug-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .results-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+
+    .comparison-table {
+        font-size: var(--font-size-xs);
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        padding: var(--space-2);
+    }
+}
+
+@media (max-width: 480px) {
+    .radio-group {
+        flex-direction: column;
+    }
+
+    .radio-label {
+        width: 100%;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .timeline-controls {
+        flex-wrap: wrap;
+    }
+
+    .timeline-btn {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+    }
+}
+
+/* ================================
+   Scrollbar Styling
+   ================================ */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* ================================
+   Floating Results Panel
+   ================================ */
+.floating-panel {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    width: 280px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(59, 130, 246, 0.15);
+    z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.floating-panel.hidden {
+    transform: translateY(-50%) translateX(350px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.floating-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-5);
+    background: linear-gradient(135deg, var(--primary-600), var(--accent-600));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.floating-panel-title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: white;
+}
+
+.floating-panel-toggle {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.floating-panel-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.floating-panel-toggle svg {
+    width: 16px;
+    height: 16px;
+}
+
+.floating-panel-body {
+    padding: var(--space-4) var(--space-5);
+}
+
+.floating-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) 0;
+}
+
+.floating-item.highlight {
+    padding: var(--space-3) 0;
+}
+
+.floating-label {
+    font-size: var(--font-size-sm);
+    color: var(--gray-400);
+}
+
+.floating-value {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--gray-100);
+}
+
+.floating-value.accent {
+    color: var(--accent-400);
+}
+
+.floating-value.large {
+    font-size: var(--font-size-xl);
+}
+
+.floating-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: var(--space-2) 0;
+}
+
+.floating-panel-footer {
+    padding: var(--space-3) var(--space-5);
+    background: rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.floating-panel-footer small {
+    font-size: var(--font-size-xs);
+    color: var(--gray-500);
+}
+
+/* Floating Panel Open Button */
+.floating-panel-open {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-600), var(--accent-600));
+    border: none;
+    border-radius: var(--radius-full);
+    box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    z-index: 999;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.floating-panel-open.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.floating-panel-open:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 12px 40px rgba(59, 130, 246, 0.5);
+}
+
+.floating-panel-open svg {
+    width: 20px;
+    height: 20px;
+    color: white;
+    display: none;
+}
+
+.floating-panel-open span {
+    font-size: 24px;
+}
+
+/* Pulse animation for when drugs are selected */
+.floating-panel.has-selection {
+    animation: floatingPulse 2s infinite;
+}
+
+@keyframes floatingPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(59, 130, 246, 0.15);
+    }
+
+    50% {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 60px rgba(45, 212, 191, 0.3);
+    }
+}
+
+/* Responsive adjustments for floating panel */
+@media (max-width: 1400px) {
+    .floating-panel {
+        width: 260px;
+        right: 15px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .floating-panel {
+        width: 240px;
+        right: 10px;
+    }
+
+    .floating-panel-body {
+        padding: var(--space-3) var(--space-4);
+    }
+}
+
+@media (max-width: 768px) {
+    .floating-panel {
+        top: auto;
+        bottom: 20px;
+        right: 50%;
+        transform: translateX(50%);
+        width: calc(100% - 40px);
+        max-width: 400px;
+    }
+
+    .floating-panel.hidden {
+        transform: translateX(50%) translateY(150%);
+    }
+
+    .floating-panel-open {
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+        transform: none;
+        width: 56px;
+        height: 56px;
+    }
+
+    .floating-panel-open:hover {
+        transform: scale(1.1);
+    }
+
+    .floating-panel-open.visible {
+        transform: none;
+    }
+}

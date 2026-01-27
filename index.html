@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="IBD（炎症性腸疾患）治療薬の薬価計算アプリ。体重に応じた投与量計算、自己負担額の算出、月単位・年単位のコスト推移を表示します。">
+    <title>IBD薬価計算アプリ | 炎症性腸疾患治療薬費用シミュレーター</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="IBD薬価計算">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="IBD薬価計算">
+    <meta name="msapplication-TileColor" content="#3b82f6">
+    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-72x72.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-192x192.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg>
+                    </div>
+                    <h1>IBD薬価計算</h1>
+                </div>
+                <p class="tagline">炎症性腸疾患治療薬の費用シミュレーター</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section glass-card">
+                <h2 class="section-title">
+                    <span class="title-icon">⚙️</span>
+                    基本設定
+                </h2>
+
+                <div class="input-grid">
+                    <!-- Disease Type -->
+                    <div class="input-group">
+                        <label class="input-label">疾患タイプ</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="disease" value="UC" checked id="disease-uc">
+                                <span class="radio-custom"></span>
+                                <span class="radio-text">潰瘍性大腸炎 (UC)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="disease" value="CD" id="disease-cd">
+                                <span class="radio-custom"></span>
+                                <span class="radio-text">クローン病 (CD)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Body Weight -->
+                    <div class="input-group">
+                        <label class="input-label" for="weight">体重 (kg)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="weight" value="60" min="30" max="150" step="0.1">
+                            <span class="input-unit">kg</span>
+                        </div>
+                    </div>
+
+                    <!-- Self Payment Ratio -->
+                    <div class="input-group">
+                        <label class="input-label" for="payment-ratio">自己負担割合</label>
+                        <select id="payment-ratio">
+                            <option value="0.3">3割負担（一般）</option>
+                            <option value="0.2">2割負担（70-74歳）</option>
+                            <option value="0.1">1割負担（75歳以上）</option>
+                            <option value="0.2" selected>2割負担（指定難病）</option>
+                        </select>
+                    </div>
+
+                    <!-- Monthly Upper Limit -->
+                    <div class="input-group">
+                        <label class="input-label" for="upper-limit">月額上限（指定難病）</label>
+                        <select id="upper-limit">
+                            <option value="0">上限なし</option>
+                            <option value="2500">2,500円（低所得I）</option>
+                            <option value="5000">5,000円（低所得II）</option>
+                            <option value="10000" selected>10,000円（一般所得I）</option>
+                            <option value="20000">20,000円（一般所得II）</option>
+                            <option value="30000">30,000円（上位所得）</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Drug Selection -->
+            <section class="drug-section glass-card">
+                <h2 class="section-title">
+                    <span class="title-icon">💊</span>
+                    薬剤選択
+                </h2>
+
+                <div class="drug-categories" id="drug-categories">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section glass-card" id="results-section">
+                <h2 class="section-title">
+                    <span class="title-icon">📊</span>
+                    計算結果
+                </h2>
+
+                <div class="results-grid" id="results-grid">
+                    <!-- Results will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Cost Timeline -->
+            <section class="timeline-section glass-card" id="timeline-section">
+                <h2 class="section-title">
+                    <span class="title-icon">📈</span>
+                    コスト推移
+                </h2>
+
+                <div class="timeline-controls">
+                    <button class="timeline-btn active" data-period="monthly">月単位</button>
+                    <button class="timeline-btn" data-period="yearly">年単位</button>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="cost-chart"></canvas>
+                </div>
+
+                <div class="timeline-summary" id="timeline-summary">
+                    <!-- Summary will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Comparison Section -->
+            <section class="comparison-section glass-card" id="comparison-section">
+                <h2 class="section-title">
+                    <span class="title-icon">⚖️</span>
+                    薬剤比較
+                </h2>
+
+                <div class="comparison-chart-container">
+                    <canvas id="comparison-chart"></canvas>
+                </div>
+
+                <div class="comparison-table-container">
+                    <table class="comparison-table" id="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>薬剤名</th>
+                                <th>投与間隔</th>
+                                <th>月額薬価</th>
+                                <th>月額自己負担</th>
+                                <th>年額自己負担</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-table-body">
+                            <!-- Rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p class="disclaimer">
+                    ※ このアプリは参考情報の提供を目的としています。実際の医療費は医療機関や処方内容によって異なる場合があります。
+                </p>
+                <p class="copyright">
+                    薬価データ: 2024年4月時点 | 最終更新: 2025年1月
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Floating Results Panel -->
+    <aside class="floating-panel" id="floating-panel">
+        <div class="floating-panel-header">
+            <span class="floating-panel-title">💰 計算結果</span>
+            <button class="floating-panel-toggle" id="floating-toggle" title="パネルを閉じる">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+        <div class="floating-panel-body" id="floating-results">
+            <div class="floating-item">
+                <span class="floating-label">選択薬剤</span>
+                <span class="floating-value" id="floating-drug-count">0 剤</span>
+            </div>
+            <div class="floating-divider"></div>
+            <div class="floating-item">
+                <span class="floating-label">月額薬価</span>
+                <span class="floating-value" id="floating-monthly-total">¥0</span>
+            </div>
+            <div class="floating-item highlight">
+                <span class="floating-label">月額自己負担</span>
+                <span class="floating-value accent" id="floating-monthly-self">¥0</span>
+            </div>
+            <div class="floating-divider"></div>
+            <div class="floating-item highlight">
+                <span class="floating-label">年間自己負担</span>
+                <span class="floating-value accent large" id="floating-yearly-self">¥0</span>
+            </div>
+            <div class="floating-item">
+                <span class="floating-label">5年間累計</span>
+                <span class="floating-value" id="floating-5year-self">¥0</span>
+            </div>
+        </div>
+        <div class="floating-panel-footer">
+            <small id="floating-payment-info">2割負担・上限10,000円</small>
+        </div>
+    </aside>
+
+    <!-- Floating Panel Toggle Button (when closed) -->
+    <button class="floating-panel-open" id="floating-open" title="計算結果を表示">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M2 12h20"></path>
+        </svg>
+        <span>💰</span>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="drugs.js"></script>
+    <script src="app.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(function (registration) {
+                        console.log('ServiceWorker registration successful with scope:', registration.scope);
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', function () {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', function () {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New content is available, show update prompt
+                                    if (confirm('新しいバージョンがあります。更新しますか？')) {
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch(function (error) {
+                        console.log('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+
+        // Handle iOS install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', function (e) {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Show install button or banner if needed
+            console.log('PWA install prompt ready');
+        });
+    </script>
+</body>
+
+</html>
