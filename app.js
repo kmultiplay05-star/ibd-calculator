@@ -215,6 +215,47 @@ document.addEventListener('DOMContentLoaded', function () {
                 updateCharts();
             });
         });
+
+        // Floating panel - Desktop: close button, Mobile: toggle collapse
+        if (elements.floatingToggle) {
+            elements.floatingToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (window.innerWidth <= 768) {
+                    // Mobile: toggle collapsed state
+                    elements.floatingPanel.classList.toggle('collapsed');
+                } else {
+                    // Desktop: hide panel completely  
+                    elements.floatingPanel.classList.add('hidden');
+                    if (elements.floatingOpen) {
+                        elements.floatingOpen.classList.add('visible');
+                    }
+                }
+            });
+        }
+
+        // Mobile: tap header to collapse/expand
+        const floatingHeader = document.getElementById('floating-header');
+        if (floatingHeader) {
+            floatingHeader.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && e.target.closest('.floating-panel-toggle') === null) {
+                    elements.floatingPanel.classList.toggle('collapsed');
+                }
+            });
+        }
+
+        if (elements.floatingOpen) {
+            elements.floatingOpen.addEventListener('click', () => {
+                elements.floatingPanel.classList.remove('hidden');
+                elements.floatingOpen.classList.remove('visible');
+            });
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                elements.floatingPanel.classList.remove('collapsed');
+            }
+        });
     }
 
     // Toggle drug selection

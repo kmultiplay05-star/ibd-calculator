@@ -1132,34 +1132,152 @@ select option {
     }
 }
 
+/* Mobile: Compact bottom bar style */
 @media (max-width: 768px) {
     .floating-panel {
+        position: fixed;
         top: auto;
-        bottom: 20px;
-        right: 50%;
-        transform: translateX(50%);
-        width: calc(100% - 40px);
-        max-width: 400px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: none;
+        width: 100%;
+        max-width: none;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        padding-bottom: env(safe-area-inset-bottom, 0);
+        max-height: 50vh;
+        overflow-y: auto;
     }
 
     .floating-panel.hidden {
-        transform: translateX(50%) translateY(150%);
+        transform: translateY(100%);
+    }
+
+    .floating-panel.collapsed {
+        max-height: none;
+    }
+
+    .floating-panel.collapsed .floating-panel-body {
+        display: none;
+    }
+
+    .floating-panel.collapsed .floating-panel-footer {
+        display: none;
+    }
+
+    .floating-panel-header {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .floating-panel-title {
+        font-size: var(--font-size-sm);
+    }
+
+    .floating-panel-body {
+        padding: var(--space-3) var(--space-4);
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-2) var(--space-4);
+    }
+
+    .floating-item {
+        padding: var(--space-1) 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+
+    .floating-item.highlight {
+        padding: var(--space-1) 0;
+    }
+
+    .floating-divider {
+        display: none;
+    }
+
+    .floating-label {
+        font-size: var(--font-size-xs);
+    }
+
+    .floating-value {
+        font-size: var(--font-size-sm);
+    }
+
+    .floating-value.large {
+        font-size: var(--font-size-base);
+    }
+
+    .floating-panel-footer {
+        padding: var(--space-2) var(--space-4);
+        padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0));
     }
 
     .floating-panel-open {
+        position: fixed;
         top: auto;
-        bottom: 20px;
+        bottom: calc(20px + env(safe-area-inset-bottom, 0));
         right: 20px;
         transform: none;
-        width: 56px;
-        height: 56px;
+        width: 50px;
+        height: 50px;
     }
 
     .floating-panel-open:hover {
-        transform: scale(1.1);
+        transform: scale(1.05);
     }
 
     .floating-panel-open.visible {
         transform: none;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .floating-panel-open span {
+        font-size: 20px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 400px) {
+    .floating-panel-body {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-1) var(--space-3);
+    }
+
+    .floating-label {
+        font-size: 10px;
+    }
+
+    .floating-value {
+        font-size: var(--font-size-xs);
+    }
+
+    .floating-value.large {
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* PWA Standalone mode adjustments */
+@media (display-mode: standalone) {
+    .floating-panel {
+        /* Ensure it works in PWA mode */
+        position: fixed !important;
+        z-index: 9999 !important;
+    }
+
+    .floating-panel-open {
+        position: fixed !important;
+        z-index: 9998 !important;
+    }
+}
+
+/* iOS PWA safe area support */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .floating-panel {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .floating-panel-open {
+        bottom: calc(20px + env(safe-area-inset-bottom));
     }
 }

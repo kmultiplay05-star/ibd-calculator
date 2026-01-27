@@ -206,11 +206,11 @@
 
     <!-- Floating Results Panel -->
     <aside class="floating-panel" id="floating-panel">
-        <div class="floating-panel-header">
+        <div class="floating-panel-header" id="floating-header">
             <span class="floating-panel-title">💰 計算結果</span>
             <button class="floating-panel-toggle" id="floating-toggle" title="パネルを閉じる">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
+                    <polyline points="18 15 12 9 6 15"></polyline>
                 </svg>
             </button>
         </div>
@@ -219,7 +219,6 @@
                 <span class="floating-label">選択薬剤</span>
                 <span class="floating-value" id="floating-drug-count">0 剤</span>
             </div>
-            <div class="floating-divider"></div>
             <div class="floating-item">
                 <span class="floating-label">月額薬価</span>
                 <span class="floating-value" id="floating-monthly-total">¥0</span>
@@ -228,7 +227,6 @@
                 <span class="floating-label">月額自己負担</span>
                 <span class="floating-value accent" id="floating-monthly-self">¥0</span>
             </div>
-            <div class="floating-divider"></div>
             <div class="floating-item highlight">
                 <span class="floating-label">年間自己負担</span>
                 <span class="floating-value accent large" id="floating-yearly-self">¥0</span>
@@ -237,9 +235,10 @@
                 <span class="floating-label">5年間累計</span>
                 <span class="floating-value" id="floating-5year-self">¥0</span>
             </div>
-        </div>
-        <div class="floating-panel-footer">
-            <small id="floating-payment-info">2割負担・上限10,000円</small>
+            <div class="floating-item">
+                <span class="floating-label">負担条件</span>
+                <span class="floating-value" id="floating-payment-info">2割負担</span>
+            </div>
         </div>
     </aside>
 
