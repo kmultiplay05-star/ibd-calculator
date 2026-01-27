@@ -342,6 +342,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Update all results
     function updateResults() {
+        // Always update floating panel (even when no drugs selected)
+        updateFloatingPanel();
+
         if (state.selectedDrugs.size === 0) {
             showEmptyState();
             return;
@@ -770,6 +773,57 @@ document.addEventListener('DOMContentLoaded', function () {
                 tbody.appendChild(row);
             }
         });
+    }
+
+    // Update floating panel with current calculations
+    function updateFloatingPanel() {
+        let totalMonthlyCost = 0;
+        const drugCount = state.selectedDrugs.size;
+
+        state.selectedDrugs.forEach(drugId => {
+            const result = findDrug(drugId);
+            if (result) {
+                const costs = calculateMonthlyCost(result.drug);
+                totalMonthlyCost += costs.totalMonthlyCost;
+            }
+        });
+
+        const monthlySelfPayment = calculateSelfPayment(totalMonthlyCost, true);
+        const yearlySelfPayment = monthlySelfPayment * 12;
+        const fiveYearSelfPayment = yearlySelfPayment * 5;
+
+        // Update floating panel values
+        if (elements.floatingDrugCount) {
+            elements.floatingDrugCount.textContent = `${drugCount} 剤`;
+        }
+        if (elements.floatingMonthlyTotal) {
+            elements.floatingMonthlyTotal.textContent = formatCurrency(totalMonthlyCost);
+        }
+        if (elements.floatingMonthlySelf) {
+            elements.floatingMonthlySelf.textContent = formatCurrency(monthlySelfPayment);
+        }
+        if (elements.floatingYearlySelf) {
+            elements.floatingYearlySelf.textContent = formatCurrency(yearlySelfPayment);
+        }
+        if (elements.floating5YearSelf) {
+            elements.floating5YearSelf.textContent = formatCurrency(fiveYearSelfPayment);
+        }
+
+        // Update payment info
+        if (elements.floatingPaymentInfo) {
+            const ratioText = `${Math.round(state.paymentRatio * 100)}割`;
+            const limitText = state.upperLimit > 0 ? ` 上限${formatCurrency(state.upperLimit)}` : '';
+            elements.floatingPaymentInfo.textContent = ratioText + limitText;
+        }
+
+        // Add/remove selection animation
+        if (elements.floatingPanel) {
+            if (drugCount > 0) {
+                elements.floatingPanel.classList.add('has-selection');
+            } else {
+                elements.floatingPanel.classList.remove('has-selection');
+            }
+        }
     }
 
     // Initialize
