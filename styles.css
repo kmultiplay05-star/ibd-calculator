@@ -200,6 +200,51 @@ body {
     font-size: var(--font-size-2xl);
 }
 
+.title-badges {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-left: auto;
+}
+
+.title-disease-badge {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    background: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+
+.title-disease-badge.uc {
+    background: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+
+.title-disease-badge.cd {
+    background: rgba(168, 85, 247, 0.3);
+    color: #d8b4fe;
+}
+
+.title-phase-badge {
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    background: rgba(34, 197, 94, 0.3);
+    color: #86efac;
+}
+
+.title-phase-badge.induction {
+    background: rgba(251, 191, 36, 0.3);
+    color: #fcd34d;
+}
+
+.title-phase-badge.maintenance {
+    background: rgba(34, 197, 94, 0.3);
+    color: #86efac;
+}
+
 /* ================================
    Input Section
    ================================ */
@@ -427,6 +472,84 @@ select option {
     transform: rotate(180deg);
 }
 
+/* Category color coding */
+.category-header {
+    border-left: 4px solid transparent;
+}
+
+.category-5asa .category-header {
+    border-left-color: #22c55e;
+}
+
+.category-steroid .category-header {
+    border-left-color: #eab308;
+}
+
+.category-immunomodulator .category-header {
+    border-left-color: #a855f7;
+}
+
+.category-immunosuppressant .category-header {
+    border-left-color: #ec4899;
+}
+
+.category-anti-tnf .category-header {
+    border-left-color: #3b82f6;
+}
+
+.category-anti-il .category-header {
+    border-left-color: #06b6d4;
+}
+
+.category-anti-integrin .category-header {
+    border-left-color: #0ea5e9;
+}
+
+.category-jak .category-header {
+    border-left-color: #ef4444;
+}
+
+.category-s1p .category-header {
+    border-left-color: #f97316;
+}
+
+/* Category icon accent colors */
+.category-5asa .category-icon {
+    color: #22c55e;
+}
+
+.category-steroid .category-icon {
+    color: #eab308;
+}
+
+.category-immunomodulator .category-icon {
+    color: #a855f7;
+}
+
+.category-immunosuppressant .category-icon {
+    color: #ec4899;
+}
+
+.category-anti-tnf .category-icon {
+    color: #3b82f6;
+}
+
+.category-anti-il .category-icon {
+    color: #06b6d4;
+}
+
+.category-anti-integrin .category-icon {
+    color: #0ea5e9;
+}
+
+.category-jak .category-icon {
+    color: #ef4444;
+}
+
+.category-s1p .category-icon {
+    color: #f97316;
+}
+
 .category-drugs {
     display: none;
     padding: var(--space-4) var(--space-5);
@@ -469,6 +592,23 @@ select option {
     align-items: flex-start;
     justify-content: space-between;
     margin-bottom: var(--space-2);
+}
+
+.drug-info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.drug-route-icon {
+    font-size: var(--font-size-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .drug-name {
@@ -1046,6 +1186,26 @@ select option {
     color: white;
 }
 
+.floating-disease-badge {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    background: rgba(59, 130, 246, 0.4);
+    color: #dbeafe;
+    margin-left: auto;
+}
+
+.floating-disease-badge.uc {
+    background: rgba(59, 130, 246, 0.4);
+    color: #dbeafe;
+}
+
+.floating-disease-badge.cd {
+    background: rgba(168, 85, 247, 0.4);
+    color: #f3e8ff;
+}
+
 .floating-phase-badge {
     font-size: var(--font-size-xs);
     font-weight: 500;
@@ -1053,7 +1213,7 @@ select option {
     border-radius: var(--radius-sm);
     background: rgba(255, 255, 255, 0.2);
     color: white;
-    margin-left: auto;
+    margin-left: var(--space-1);
     margin-right: var(--space-2);
 }
 

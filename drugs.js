@@ -5,7 +5,7 @@ const DRUG_DATABASE = {
         {
             id: '5asa',
             name: '5-ASA製剤',
-            icon: '💚',
+            icon: '🟢',
             cssClass: 'category-5asa',
             drugs: [
                 {
@@ -159,7 +159,7 @@ const DRUG_DATABASE = {
         {
             id: 'immunomodulator',
             name: '免疫調節薬',
-            icon: '💜',
+            icon: '🟣',
             cssClass: 'category-immunomodulator',
             drugs: [
                 {
@@ -217,7 +217,7 @@ const DRUG_DATABASE = {
         {
             id: 'immunosuppressant',
             name: '免疫抑制薬',
-            icon: '💗',
+            icon: '🔴',
             cssClass: 'category-immunosuppressant',
             drugs: [
                 {
@@ -276,7 +276,7 @@ const DRUG_DATABASE = {
         {
             id: 'antitnf',
             name: '抗TNFα抗体',
-            icon: '💙',
+            icon: '🔵',
             cssClass: 'category-antitnf',
             drugs: [
                 {
@@ -306,6 +306,54 @@ const DRUG_DATABASE = {
                     pricing: {
                         formulation: '点滴静注用100mg',
                         unitPrice: 51351, // 2025年4月薬価
+                        mgPerUnit: 100,
+                        isInjection: true
+                    },
+                    adjustments: {
+                        UC: null,
+                        CD: [
+                            {
+                                id: 'shorten',
+                                label: '期間短縮',
+                                description: '4週毎へ短縮',
+                                intervalMultiplier: 0.5
+                            },
+                            {
+                                id: 'increase',
+                                label: '10mg/kg増量',
+                                description: '10mg/kgへ増量',
+                                multiplier: 2.0
+                            }
+                        ]
+                    }
+                },
+                {
+                    id: 'infliximab-bs',
+                    genericName: 'インフリキシマブBS',
+                    brandName: 'レミケードBS',
+                    indication: ['UC', 'CD'],
+                    dosing: {
+                        induction: {
+                            dosePerKg: 5,
+                            unit: 'mg/kg',
+                            frequency: '点滴静注',
+                            type: 'weight-based',
+                            description: '0・2・6週 5mg/kg 点滴',
+                            schedule: [0, 14, 42],
+                            totalDoses: 3
+                        },
+                        maintenance: {
+                            dosePerKg: 5,
+                            unit: 'mg/kg',
+                            frequency: '点滴静注',
+                            interval: 56,
+                            type: 'weight-based',
+                            description: '8週毎 5mg/kg 点滴'
+                        }
+                    },
+                    pricing: {
+                        formulation: '点滴静注用100mg',
+                        unitPrice: 17099, // 2025年4月薬価（バイオシミラー）
                         mgPerUnit: 100,
                         isInjection: true
                     },
@@ -381,6 +429,58 @@ const DRUG_DATABASE = {
                     }
                 },
                 {
+                    id: 'adalimumab-bs',
+                    genericName: 'アダリムマブBS',
+                    brandName: 'ヒュミラBS',
+                    indication: ['UC', 'CD'],
+                    dosing: {
+                        induction: {
+                            dose: 160,
+                            unit: 'mg',
+                            frequency: '皮下注',
+                            description: '0週160mg・2週80mg・以降40mg隔週',
+                            totalUnits: 9
+                        },
+                        maintenance: {
+                            dose: 40,
+                            unit: 'mg',
+                            frequency: '皮下注',
+                            interval: 14,
+                            description: '2週毎 40mg 皮下注'
+                        }
+                    },
+                    pricing: {
+                        formulation: '皮下注40mgペン0.4mL',
+                        unitPrice: 18636, // 2025年4月薬価（バイオシミラー）
+                        mgPerUnit: 40,
+                        isInjection: true
+                    },
+                    adjustments: {
+                        UC: [
+                            {
+                                id: 'weekly',
+                                label: '毎週投与',
+                                description: '40mg毎週投与へ変更',
+                                intervalMultiplier: 0.5
+                            },
+                            {
+                                id: 'increase',
+                                label: '80mg/2週',
+                                description: '80mg隔週へ増量',
+                                multiplier: 2.0
+                            }
+                        ],
+                        CD: [
+                            {
+                                id: 'increase',
+                                label: '80mg増量',
+                                description: '1回80mgへ増量',
+                                multiplier: 2.0
+                            }
+                        ]
+                    }
+                },
+                {
                     id: 'golimumab',
                     genericName: 'ゴリムマブ',
                     brandName: 'シンポニー',
@@ -415,7 +515,7 @@ const DRUG_DATABASE = {
         {
             id: 'antiil',
             name: '抗インターロイキン抗体',
-            icon: '🩵',
+            icon: '🧬',
             cssClass: 'category-antiil',
             drugs: [
                 {
@@ -547,6 +647,48 @@ const DRUG_DATABASE = {
                         isInjection: true
                     },
                     adjustments: null
+                },
+                {
+                    id: 'guselkumab',
+                    genericName: 'グセルクマブ',
+                    brandName: 'トレムフィア',
+                    indication: ['UC', 'CD'],
+                    dosing: {
+                        induction: {
+                            dose: 200,
+                            unit: 'mg',
+                            frequency: '点滴静注',
+                            description: 'UC: 0・4・8週 200mg点滴 または 0・4週 400mg点滴',
+                            // 8週: 200mg × 3回 = 3本（または400mg×2週で6本）
+                            totalUnits: 3
+                        },
+                        maintenance: {
+                            dose: 200,
+                            unit: 'mg',
+                            frequency: '皮下注',
+                            interval: 56, // 8週毎
+                            description: '8週毎 200mg 皮下注'
+                        }
+                    },
+                    pricing: {
+                        formulation: '点滴静注200mg',
+                        unitPrice: 253045, // 2025年5月薬価（点滴200mg）
+                        mgPerUnit: 200,
+                        scUnitPrice: 339733, // 皮下注200mg
+                        scMgPerUnit: 200,
+                        isInjection: true
+                    },
+                    adjustments: {
+                        UC: [
+                            {
+                                id: 'intensive',
+                                label: '400mg点滴',
+                                description: '0・4週 400mg点滴導入',
+                                multiplier: 2.0
+                            }
+                        ],
+                        CD: null
+                    }
                 }
             ]
         },
@@ -592,7 +734,7 @@ const DRUG_DATABASE = {
         {
             id: 'jak',
             name: 'JAK阻害薬',
-            icon: '❤️',
+            icon: '⚡',
             cssClass: 'category-jak',
             drugs: [
                 {
@@ -732,7 +874,7 @@ const DRUG_DATABASE = {
         {
             id: 's1p',
             name: 'S1P受容体調節薬',
-            icon: '🧡',
+            icon: '🔶',
             cssClass: 'category-s1p',
             drugs: [
                 {

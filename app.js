@@ -37,10 +37,14 @@ document.addEventListener('DOMContentLoaded', function () {
         floatingToggle: document.getElementById('floating-toggle'),
         floatingOpen: document.getElementById('floating-open'),
         floatingPhase: document.getElementById('floating-phase'),
+        floatingDisease: document.getElementById('floating-disease'),
         floatingDrugCount: document.getElementById('floating-drug-count'),
         floatingMonthlyTotal: document.getElementById('floating-monthly-total'),
         floatingMonthlySelf: document.getElementById('floating-monthly-self'),
-        floatingYearlySelf: document.getElementById('floating-yearly-self')
+        floatingYearlySelf: document.getElementById('floating-yearly-self'),
+        // Results section badges
+        resultsDiseaseBadge: document.getElementById('results-disease-badge'),
+        resultsPhaseBadge: document.getElementById('results-phase-badge')
     };
 
     // Initialize the application
@@ -100,12 +104,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const adjustmentOptions = getAdjustmentOptions(drug);
         const currentAdjustment = state.drugAdjustments.get(drug.id);
 
+        // Determine the drug icon based on administration route
+        const routeIcon = getDrugRouteIcon(drug);
+
         return `
             <div class="drug-card ${isSelected ? 'selected' : ''}" data-drug-id="${drug.id}">
                 <div class="drug-card-header">
-                    <div>
-                        <div class="drug-name">${drug.brandName}</div>
-                        <div class="drug-generic">${drug.genericName}</div>
+                    <div class="drug-info-wrapper">
+                        <span class="drug-route-icon">${routeIcon}</span>
+                        <div>
+                            <div class="drug-name">${drug.brandName}</div>
+                            <div class="drug-generic">${drug.genericName}</div>
+                        </div>
                     </div>
                     <div class="drug-checkbox">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
@@ -144,6 +154,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 ` : ''}
             </div>
         `;
+    }
+
+    // Get icon based on drug administration route
+    function getDrugRouteIcon(drug) {
+        const phaseDosing = drug.dosing[state.treatmentPhase];
+        if (!phaseDosing) {
+            // Fallback to induction or maintenance
+            const fallbackDosing = drug.dosing.induction || drug.dosing.maintenance;
+            if (fallbackDosing) {
+                return getIconFromFrequency(fallbackDosing.frequency);
+            }
+            return '💊';
+        }
+        return getIconFromFrequency(phaseDosing.frequency);
+    }
+
+    // Get icon from frequency/route description
+    function getIconFromFrequency(frequency) {
+        if (!frequency) return '💊';
+        if (frequency.includes('点滴') || frequency.includes('静注')) {
+            return '💧'; // IV drip (blue)
+        } else if (frequency.includes('皮下注')) {
+            return '💉'; // Subcutaneous injection
+        } else {
+            return '💊'; // Oral medication
+        }
     }
 
     // Get adjustment options for a drug based on current disease type
@@ -418,8 +454,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const days = 56;
 
             switch (drug.id) {
-                case 'infliximab': {
-                    // IFX: 0・2・6週 5mg/kg → 3回投与
+                case 'infliximab':
+                case 'infliximab-bs': {
+                    // IFX/IFX-BS: 0・2・6週 5mg/kg → 3回投与
                     const totalDose = 5 * state.weight;
                     const vialsPerDose = Math.ceil(totalDose / pricing.mgPerUnit);
                     unitsNeeded = vialsPerDose * 3;
@@ -427,8 +464,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     costPerDose = vialsPerDose * pricing.unitPrice;
                     break;
                 }
-                case 'adalimumab': {
-                    // ADA: 0週160mg + 2週80mg + 4,6週40mg = 9本
+                case 'adalimumab':
+                case 'adalimumab-bs': {
+                    // ADA/ADA-BS: 0週160mg + 2週80mg + 4,6週40mg = 9本
                     unitsNeeded = phaseDosing.totalUnits || 9;
                     totalPhaseCost = unitsNeeded * pricing.unitPrice;
                     costPerDose = pricing.unitPrice;
@@ -462,6 +500,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     unitsNeeded = phaseDosing.totalUnits || 3;
                     totalPhaseCost = unitsNeeded * pricing.unitPrice;
                     costPerDose = pricing.unitPrice;
+                    break;
+                }
+                case 'guselkumab': {
+                    // トレムフィア: 0・4・8週 200mg点滴 = 3瓶（または400mg導入で6瓶）
+                    unitsNeeded = (phaseDosing.totalUnits || 3) * doseMultiplier;
+                    totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    costPerDose = pricing.unitPrice * doseMultiplier;
                     break;
                 }
                 case 'vedolizumab': {
@@ -1071,6 +1116,25 @@ document.addEventListener('DOMContentLoaded', function () {
             const phaseText = state.treatmentPhase === 'induction' ? '導入期' : '維持期';
             elements.floatingPhase.textContent = phaseText;
             elements.floatingPhase.className = `floating-phase-badge ${state.treatmentPhase}`;
+        }
+
+        // Update disease type badge
+        if (elements.floatingDisease) {
+            const diseaseText = state.diseaseType === 'UC' ? 'UC' : 'CD';
+            elements.floatingDisease.textContent = diseaseText;
+            elements.floatingDisease.className = `floating-disease-badge ${state.diseaseType.toLowerCase()}`;
+        }
+
+        // Update results section badges
+        if (elements.resultsDiseaseBadge) {
+            const diseaseText = state.diseaseType === 'UC' ? 'UC' : 'CD';
+            elements.resultsDiseaseBadge.textContent = diseaseText;
+            elements.resultsDiseaseBadge.className = `title-disease-badge ${state.diseaseType.toLowerCase()}`;
+        }
+        if (elements.resultsPhaseBadge) {
+            const phaseText = state.treatmentPhase === 'induction' ? '導入期' : '維持期';
+            elements.resultsPhaseBadge.textContent = phaseText;
+            elements.resultsPhaseBadge.className = `title-phase-badge ${state.treatmentPhase}`;
         }
 
         // Update floating panel values
