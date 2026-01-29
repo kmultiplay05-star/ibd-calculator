@@ -1,5 +1,5 @@
 // IBD Drug Cost Calculator - Service Worker
-const CACHE_NAME = 'ibd-calculator-v3';
+const CACHE_NAME = 'ibd-calculator-v9';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',

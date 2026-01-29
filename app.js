@@ -3,10 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // State management
     const state = {
         diseaseType: 'UC',
+        treatmentPhase: 'maintenance', // 'induction' or 'maintenance'
         weight: 60,
         paymentRatio: 0.2,
         upperLimit: 10000,
         selectedDrugs: new Set(),
+        drugAdjustments: new Map(), // 薬剤IDごとの調整オプション: { drugId: adjustmentId }
         currentPeriod: 'monthly'
     };
 
@@ -18,6 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const elements = {
         diseaseUC: document.getElementById('disease-uc'),
         diseaseCD: document.getElementById('disease-cd'),
+        phaseInduction: document.getElementById('phase-induction'),
+        phaseMaintenance: document.getElementById('phase-maintenance'),
         weight: document.getElementById('weight'),
         paymentRatio: document.getElementById('payment-ratio'),
         upperLimit: document.getElementById('upper-limit'),
@@ -32,12 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
         floatingPanel: document.getElementById('floating-panel'),
         floatingToggle: document.getElementById('floating-toggle'),
         floatingOpen: document.getElementById('floating-open'),
+        floatingPhase: document.getElementById('floating-phase'),
         floatingDrugCount: document.getElementById('floating-drug-count'),
         floatingMonthlyTotal: document.getElementById('floating-monthly-total'),
         floatingMonthlySelf: document.getElementById('floating-monthly-self'),
-        floatingYearlySelf: document.getElementById('floating-yearly-self'),
-        floating5YearSelf: document.getElementById('floating-5year-self'),
-        floatingPaymentInfo: document.getElementById('floating-payment-info')
+        floatingYearlySelf: document.getElementById('floating-yearly-self')
     };
 
     // Initialize the application
@@ -94,6 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderDrugCard(drug) {
         const isSelected = state.selectedDrugs.has(drug.id);
         const priceInfo = calculateDrugPriceInfo(drug);
+        const adjustmentOptions = getAdjustmentOptions(drug);
+        const currentAdjustment = state.drugAdjustments.get(drug.id);
 
         return `
             <div class="drug-card ${isSelected ? 'selected' : ''}" data-drug-id="${drug.id}">
@@ -116,29 +121,71 @@ document.addEventListener('DOMContentLoaded', function () {
                     ${priceInfo.formulation} | ${priceInfo.dosing}
                     ${drug.pricing.note ? `<br><small>※${drug.pricing.note}</small>` : ''}
                 </div>
+                ${adjustmentOptions.length > 0 ? `
+                <div class="drug-adjustments">
+                    <div class="adjustment-label">用量調整:</div>
+                    <div class="adjustment-buttons">
+                        <button class="adjustment-btn ${!currentAdjustment ? 'active' : ''}" 
+                                data-drug-id="${drug.id}" 
+                                data-adjustment-id="standard"
+                                title="標準用量">
+                            標準
+                        </button>
+                        ${adjustmentOptions.map(adj => `
+                            <button class="adjustment-btn ${currentAdjustment === adj.id ? 'active' : ''}" 
+                                    data-drug-id="${drug.id}" 
+                                    data-adjustment-id="${adj.id}"
+                                    title="${adj.description}">
+                                ${adj.label}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
             </div>
         `;
     }
 
+    // Get adjustment options for a drug based on current disease type
+    function getAdjustmentOptions(drug) {
+        if (!drug.adjustments) return [];
+        const options = drug.adjustments[state.diseaseType];
+        return options || [];
+    }
+
     // Calculate drug price info for display
     function calculateDrugPriceInfo(drug) {
-        let dosing = '';
+        const phaseDosing = drug.dosing[state.treatmentPhase];
 
-        if (drug.dosing.type === 'weight-based' && drug.dosing.standard.dosePerKg) {
-            dosing = `${drug.dosing.standard.dosePerKg}mg/kg`;
-        } else if (drug.dosing.standard.dose) {
-            dosing = `${drug.dosing.standard.dose}${drug.dosing.standard.unit}`;
+        // If no dosing for this phase
+        if (!phaseDosing) {
+            const phaseNote = state.treatmentPhase === 'induction' ? '維持期専用' : '導入期専用';
+            return {
+                formulation: drug.pricing.formulation,
+                dosing: phaseNote,
+                notAvailable: true
+            };
         }
 
-        if (drug.dosing.standard.interval > 1) {
-            dosing += ` / ${drug.dosing.standard.interval}日毎`;
-        } else {
-            dosing += ` ${drug.dosing.standard.frequency}`;
+        let dosing = '';
+
+        if (phaseDosing.dosePerKg) {
+            dosing = `${phaseDosing.dosePerKg}mg/kg`;
+        } else if (phaseDosing.dose) {
+            dosing = `${phaseDosing.dose}${phaseDosing.unit}`;
+        }
+
+        if (phaseDosing.interval > 1) {
+            dosing += ` / ${phaseDosing.interval}日毎`;
+        } else if (phaseDosing.frequency) {
+            dosing += ` ${phaseDosing.frequency}`;
         }
 
         return {
             formulation: drug.pricing.formulation,
-            dosing: dosing
+            dosing: dosing,
+            description: phaseDosing.description || '',
+            notAvailable: false
         };
     }
 
@@ -169,6 +216,24 @@ document.addEventListener('DOMContentLoaded', function () {
             updateResults();
         });
 
+        // Treatment phase: Induction
+        if (elements.phaseInduction) {
+            elements.phaseInduction.addEventListener('change', () => {
+                state.treatmentPhase = 'induction';
+                renderDrugCategories();
+                updateResults();
+            });
+        }
+
+        // Treatment phase: Maintenance
+        if (elements.phaseMaintenance) {
+            elements.phaseMaintenance.addEventListener('change', () => {
+                state.treatmentPhase = 'maintenance';
+                renderDrugCategories();
+                updateResults();
+            });
+        }
+
         // Weight change
         elements.weight.addEventListener('input', (e) => {
             state.weight = parseFloat(e.target.value) || 60;
@@ -195,8 +260,44 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Drug card click
+        // Adjustment button click
         elements.drugCategories.addEventListener('click', (e) => {
+            const adjustmentBtn = e.target.closest('.adjustment-btn');
+            if (adjustmentBtn) {
+                e.stopPropagation(); // 薬剤カードの選択をトリガーしない
+                const drugId = adjustmentBtn.dataset.drugId;
+                const adjustmentId = adjustmentBtn.dataset.adjustmentId;
+
+                // Update adjustment state
+                if (adjustmentId === 'standard') {
+                    state.drugAdjustments.delete(drugId);
+                } else {
+                    state.drugAdjustments.set(drugId, adjustmentId);
+                }
+
+                // Update button styles
+                const card = adjustmentBtn.closest('.drug-card');
+                card.querySelectorAll('.adjustment-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                adjustmentBtn.classList.add('active');
+
+                // Auto-select drug if not already selected
+                if (!state.selectedDrugs.has(drugId)) {
+                    state.selectedDrugs.add(drugId);
+                    card.classList.add('selected');
+                }
+
+                updateResults();
+                return;
+            }
+        });
+
+        // Drug card click (excluding adjustment buttons)
+        elements.drugCategories.addEventListener('click', (e) => {
+            // Skip if clicking on adjustment buttons
+            if (e.target.closest('.adjustment-btn')) return;
+
             const drugCard = e.target.closest('.drug-card');
             if (drugCard) {
                 const drugId = drugCard.dataset.drugId;
@@ -276,48 +377,218 @@ document.addEventListener('DOMContentLoaded', function () {
         return null;
     }
 
-    // Calculate monthly drug cost
+    // Calculate drug cost based on treatment phase (Excel formula compliant)
+    // Induction: 8 weeks total cost (converted to monthly for display)
+    // Maintenance: 52 weeks cost converted to monthly
     function calculateMonthlyCost(drug) {
         const pricing = drug.pricing;
-        const dosing = drug.dosing;
+        const dosingData = drug.dosing;
+        const phaseDosing = dosingData[state.treatmentPhase];
+
+        // If no dosing for this phase, return unavailable
+        if (!phaseDosing) {
+            return {
+                costPerDose: 0,
+                totalMonthlyCost: 0,
+                totalPhaseCost: 0,
+                isInjection: pricing.isInjection || false,
+                hasAdjustment: false,
+                adjustmentLabel: null,
+                notAvailable: true,
+                phaseNote: state.treatmentPhase === 'induction' ? '維持期専用' : '導入期専用'
+            };
+        }
+
+        // Adjustments (maintenance only)
+        const adjustmentId = state.drugAdjustments.get(drug.id);
+        let adjustment = null;
+        if (state.treatmentPhase === 'maintenance' && adjustmentId && drug.adjustments?.[state.diseaseType]) {
+            adjustment = drug.adjustments[state.diseaseType].find(a => a.id === adjustmentId);
+        }
+        const priceMultiplier = adjustment?.priceMultiplier || 1;
+        const doseMultiplier = adjustment?.multiplier || 1;
+        const intervalMultiplier = adjustment?.intervalMultiplier || 1;
+
+        let totalPhaseCost = 0;
         let costPerDose = 0;
-        let dosesPerMonth = 0;
+        let unitsNeeded = 0;
 
-        // Calculate cost per dose
-        if (dosing.type === 'weight-based' && pricing.mgPerUnit) {
-            const dosePerKg = dosing.standard.dosePerKg || dosing.standard.maintenanceDose / state.weight;
-            const totalDose = Math.min(
-                dosePerKg * state.weight,
-                dosing.standard.maxDose || Infinity
-            );
-            const unitsNeeded = Math.ceil(totalDose / pricing.mgPerUnit);
-            costPerDose = unitsNeeded * pricing.unitPrice;
-        } else if (pricing.unitsPerDose) {
-            if (pricing.weightBased && pricing.dosePerKg) {
-                // Weight-based oral drugs (like tacrolimus)
-                const totalDailyDose = pricing.dosePerKg * state.weight * 2; // twice daily
-                const unitsNeeded = Math.ceil(totalDailyDose / 1); // 1mg per capsule
-                costPerDose = unitsNeeded * pricing.unitPrice;
-            } else {
-                costPerDose = pricing.unitsPerDose * pricing.unitPrice;
+        if (state.treatmentPhase === 'induction') {
+            // ===== INDUCTION: 8 weeks total =====
+            const days = 56;
+
+            switch (drug.id) {
+                case 'infliximab': {
+                    // IFX: 0・2・6週 5mg/kg → 3回投与
+                    const totalDose = 5 * state.weight;
+                    const vialsPerDose = Math.ceil(totalDose / pricing.mgPerUnit);
+                    unitsNeeded = vialsPerDose * 3;
+                    totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    costPerDose = vialsPerDose * pricing.unitPrice;
+                    break;
+                }
+                case 'adalimumab': {
+                    // ADA: 0週160mg + 2週80mg + 4,6週40mg = 9本
+                    unitsNeeded = phaseDosing.totalUnits || 9;
+                    totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    costPerDose = pricing.unitPrice;
+                    break;
+                }
+                case 'golimumab': {
+                    // GOL: 0週200mg + 2週100mg + 6週100mg = 8本
+                    unitsNeeded = phaseDosing.totalUnits || 8;
+                    totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    costPerDose = 2 * pricing.unitPrice;
+                    break;
+                }
+                case 'ustekinumab': {
+                    // UST: 点滴(体重帯) + 8週後皮下90mg
+                    let ivVials = state.weight <= 55 ? 2 : (state.weight > 85 ? 4 : 3);
+                    const ivCost = ivVials * (pricing.ivUnitPrice || 184085);
+                    const scCost = 2 * pricing.unitPrice; // 90mg = 45mg×2
+                    totalPhaseCost = ivCost + scCost;
+                    costPerDose = totalPhaseCost / 2;
+                    break;
+                }
+                case 'risankizumab': {
+                    // スキリージ: 0・4・8週 1200mg点滴 = 6瓶
+                    unitsNeeded = phaseDosing.totalUnits || 6;
+                    totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    costPerDose = 2 * pricing.unitPrice;
+                    break;
+                }
+                case 'mirikizumab': {
+                    // オンボー: 0・4・8週 300mg点滴 = 3瓶
+                    unitsNeeded = phaseDosing.totalUnits || 3;
+                    totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    costPerDose = pricing.unitPrice;
+                    break;
+                }
+                case 'vedolizumab': {
+                    // VDZ: 0・2・6週 300mg点滴 = 3瓶
+                    unitsNeeded = phaseDosing.totalUnits || 3;
+                    totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    costPerDose = pricing.unitPrice;
+                    break;
+                }
+                case 'tofacitinib': {
+                    // TOF: 10mg×2回/日 = 4錠/日 × 56日
+                    const tabletsPerDay = phaseDosing.tabletsPerDay || 4;
+                    unitsNeeded = tabletsPerDay * days;
+                    totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    costPerDose = tabletsPerDay * pricing.unitPrice;
+                    break;
+                }
+                case 'upadacitinib': {
+                    // UPA: 45mg/日 × 56日
+                    unitsNeeded = days;
+                    totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    costPerDose = pricing.unitPrice;
+                    break;
+                }
+                case 'filgotinib': {
+                    // FIL: 200mg/日 × 56日
+                    unitsNeeded = days;
+                    totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    costPerDose = pricing.unitPrice;
+                    break;
+                }
+                default: {
+                    // Generic: daily oral or fixed interval
+                    if (phaseDosing.interval && phaseDosing.interval > 1) {
+                        const doses = Math.ceil(days / phaseDosing.interval);
+                        if (pricing.mgPerUnit && phaseDosing.dose) {
+                            unitsNeeded = Math.ceil(phaseDosing.dose / pricing.mgPerUnit) * doses;
+                        } else {
+                            unitsNeeded = doses;
+                        }
+                        totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    } else if (phaseDosing.dose && pricing.mgPerUnit) {
+                        const unitsPerDay = Math.ceil(phaseDosing.dose / pricing.mgPerUnit);
+                        unitsNeeded = unitsPerDay * days;
+                        totalPhaseCost = unitsNeeded * pricing.unitPrice;
+                    } else {
+                        totalPhaseCost = pricing.unitPrice * days;
+                    }
+                    costPerDose = pricing.unitPrice;
+                }
             }
-        }
 
-        // Calculate doses per month (30 days)
-        const interval = dosing.standard.interval || 1;
-        if (interval === 1) {
-            dosesPerMonth = 30;
+            return {
+                costPerDose,
+                unitsNeeded,
+                totalPhaseCost,
+                totalMonthlyCost: totalPhaseCost / 2, // 8週≈2ヶ月
+                isInjection: pricing.isInjection || false,
+                hasAdjustment: false,
+                adjustmentLabel: null,
+                description: phaseDosing.description || '',
+                notAvailable: false
+            };
+
         } else {
-            dosesPerMonth = 30 / interval;
-        }
+            // ===== MAINTENANCE: 52 weeks =====
+            const weeks = 52;
+            const days = 364;
+            let yearlyUnits = 0;
 
-        return {
-            costPerDose,
-            dosesPerMonth,
-            totalMonthlyCost: costPerDose * dosesPerMonth,
-            interval,
-            isInjection: pricing.isInjection || false
-        };
+            if (phaseDosing.interval && phaseDosing.interval > 1) {
+                // Injection: interval in days
+                // Apply intervalMultiplier (e.g., 0.5 for weekly instead of biweekly)
+                const adjustedInterval = phaseDosing.interval * intervalMultiplier;
+                const intervalWeeks = adjustedInterval / 7;
+                const doses = Math.floor(weeks / intervalWeeks);
+
+                if (phaseDosing.dosePerKg) {
+                    // Weight-based (IFX)
+                    const vialsPerDose = Math.ceil(phaseDosing.dosePerKg * state.weight * doseMultiplier / pricing.mgPerUnit);
+                    yearlyUnits = vialsPerDose * doses;
+                    costPerDose = vialsPerDose * pricing.unitPrice * priceMultiplier;
+                    totalPhaseCost = yearlyUnits * pricing.unitPrice * priceMultiplier;
+                } else {
+                    // Fixed dose - use SC pricing if available for maintenance
+                    const unitPrice = pricing.scUnitPrice || pricing.unitPrice;
+                    const mgPerUnit = pricing.scMgPerUnit || pricing.mgPerUnit || 1;
+                    const unitsPerDose = Math.ceil(phaseDosing.dose * doseMultiplier / mgPerUnit);
+                    yearlyUnits = unitsPerDose * doses;
+                    costPerDose = unitsPerDose * unitPrice * priceMultiplier;
+                    totalPhaseCost = yearlyUnits * unitPrice * priceMultiplier;
+                }
+            } else {
+                // Daily oral
+                const tabletsPerDay = phaseDosing.tabletsPerDay ||
+                    (phaseDosing.dose && pricing.mgPerUnit ? Math.ceil(phaseDosing.dose / pricing.mgPerUnit) : 1);
+                yearlyUnits = tabletsPerDay * days * doseMultiplier;
+
+                // UPA maintenance uses 15mg or 30mg pricing
+                if (drug.id === 'upadacitinib' && pricing.price15mg) {
+                    costPerDose = pricing.price15mg * priceMultiplier;
+                    totalPhaseCost = yearlyUnits * pricing.price15mg * priceMultiplier;
+                } else {
+                    costPerDose = tabletsPerDay * pricing.unitPrice * priceMultiplier;
+                    totalPhaseCost = yearlyUnits * pricing.unitPrice * priceMultiplier;
+                }
+            }
+
+            // Additional cost (rescue)
+            let additionalCost = 0;
+            if (adjustment?.additionalCostPerMonth) {
+                additionalCost = adjustment.additionalCostPerMonth;
+            }
+
+            return {
+                costPerDose,
+                unitsNeeded: yearlyUnits,
+                totalPhaseCost,
+                totalMonthlyCost: (totalPhaseCost / 12) + (additionalCost / 12),
+                interval: phaseDosing.interval || 1,
+                isInjection: pricing.isInjection || false,
+                hasAdjustment: !!adjustment,
+                adjustmentLabel: adjustment?.label || null,
+                description: phaseDosing.description || '',
+                notAvailable: false
+            };
+        }
     }
 
     // Calculate self payment with upper limit
@@ -779,22 +1050,36 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateFloatingPanel() {
         let totalMonthlyCost = 0;
         const drugCount = state.selectedDrugs.size;
+        let availableCount = 0;
 
         state.selectedDrugs.forEach(drugId => {
             const result = findDrug(drugId);
             if (result) {
                 const costs = calculateMonthlyCost(result.drug);
-                totalMonthlyCost += costs.totalMonthlyCost;
+                if (!costs.notAvailable) {
+                    totalMonthlyCost += costs.totalMonthlyCost;
+                    availableCount++;
+                }
             }
         });
 
         const monthlySelfPayment = calculateSelfPayment(totalMonthlyCost, true);
         const yearlySelfPayment = monthlySelfPayment * 12;
-        const fiveYearSelfPayment = yearlySelfPayment * 5;
+
+        // Update phase badge
+        if (elements.floatingPhase) {
+            const phaseText = state.treatmentPhase === 'induction' ? '導入期' : '維持期';
+            elements.floatingPhase.textContent = phaseText;
+            elements.floatingPhase.className = `floating-phase-badge ${state.treatmentPhase}`;
+        }
 
         // Update floating panel values
         if (elements.floatingDrugCount) {
-            elements.floatingDrugCount.textContent = `${drugCount} 剤`;
+            if (drugCount > 0 && availableCount < drugCount) {
+                elements.floatingDrugCount.textContent = `${availableCount}/${drugCount} 剤`;
+            } else {
+                elements.floatingDrugCount.textContent = `${drugCount} 剤`;
+            }
         }
         if (elements.floatingMonthlyTotal) {
             elements.floatingMonthlyTotal.textContent = formatCurrency(totalMonthlyCost);
@@ -804,16 +1089,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         if (elements.floatingYearlySelf) {
             elements.floatingYearlySelf.textContent = formatCurrency(yearlySelfPayment);
-        }
-        if (elements.floating5YearSelf) {
-            elements.floating5YearSelf.textContent = formatCurrency(fiveYearSelfPayment);
-        }
-
-        // Update payment info
-        if (elements.floatingPaymentInfo) {
-            const ratioText = `${Math.round(state.paymentRatio * 100)}割`;
-            const limitText = state.upperLimit > 0 ? ` 上限${formatCurrency(state.upperLimit)}` : '';
-            elements.floatingPaymentInfo.textContent = ratioText + limitText;
         }
 
         // Add/remove selection animation

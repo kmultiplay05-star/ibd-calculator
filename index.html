@@ -81,6 +81,23 @@
                         </div>
                     </div>
 
+                    <!-- Treatment Phase -->
+                    <div class="input-group">
+                        <label class="input-label">治療期</label>
+                        <div class="radio-group phase-group">
+                            <label class="radio-label">
+                                <input type="radio" name="phase" value="induction" id="phase-induction">
+                                <span class="radio-custom"></span>
+                                <span class="radio-text">寛解導入期<small class="phase-note">（0〜8週目の算出）</small></span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="phase" value="maintenance" checked id="phase-maintenance">
+                                <span class="radio-custom"></span>
+                                <span class="radio-text">維持期<small class="phase-note">（年間52週の算出）</small></span>
+                            </label>
+                        </div>
+                    </div>
+
                     <!-- Body Weight -->
                     <div class="input-group">
                         <label class="input-label" for="weight">体重 (kg)</label>
@@ -208,6 +225,7 @@
     <aside class="floating-panel" id="floating-panel">
         <div class="floating-panel-header" id="floating-header">
             <span class="floating-panel-title">💰 計算結果</span>
+            <span class="floating-phase-badge" id="floating-phase">維持期</span>
             <button class="floating-panel-toggle" id="floating-toggle" title="パネルを閉じる">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="18 15 12 9 6 15"></polyline>
@@ -230,14 +248,6 @@
             <div class="floating-item highlight">
                 <span class="floating-label">年間自己負担</span>
                 <span class="floating-value accent large" id="floating-yearly-self">¥0</span>
-            </div>
-            <div class="floating-item">
-                <span class="floating-label">5年間累計</span>
-                <span class="floating-value" id="floating-5year-self">¥0</span>
-            </div>
-            <div class="floating-item">
-                <span class="floating-label">負担条件</span>
-                <span class="floating-value" id="floating-payment-info">2割負担</span>
             </div>
         </div>
     </aside>
